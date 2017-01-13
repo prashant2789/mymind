@@ -1,0 +1,37 @@
+<?php
+
+function custom_voting_install(){
+  $schema['vote'] = array(
+    'description' => 'database to store the votes',
+    'nid' => array(
+      'title' => 'Node Id',
+      'description' => 'Node id of the voted node',
+      'type'=>'int',
+      'not null' => TRUE,
+      'unsigned' => TRUE,
+      'default' => 0,
+    ),
+    'uid' => array(
+      'title' => 'User id',
+      'description' => 'Id of the user who voted',
+      'type' => 'int',
+      'not null' => TRUE,
+      'unsigned' => TRUE,
+      'default' => 0,
+    ),
+    'vote_count' => array(
+      'title' => 'Vote count',
+      'description' => 'number of votes',
+      'type' => 'int',
+      'not null' => TRUE,
+      'unsigned' => TRUE,
+      'default' => 0,
+    ),
+    'primary key' => array('uid','nid'),
+    'indexes' => array(
+      'uid' => array('uid'),
+      'nid' => array('nid'),
+    ),
+  );
+  return $schema;
+}

@@ -1,0 +1,39 @@
+<?php
+
+/* 
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+function custom_voting_menu(){
+  $items['admin/config/user-interface/vote'] = array(
+    'title' => 'Voting',
+    'description' => 'Custom voting for all nodes',  
+    'page callback' => 'custom_voting_save_config',
+    'access arguments' => array('administer shortcuts'),    
+  );
+  
+  $items['admin/config/user-interface/vote/settings'] = array(
+    'title' => 'Voting',
+    'description' => 'Custom voting for all nodes',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('custom_voting_settings'),
+    'access arguments' => array('administer shortcuts'),
+    'file' => 'custom_voting.admin.inc',
+  );
+  
+  return $items;
+}
+
+function custom_voting_save_config(){
+  if(isset($voting_node_type)){
+    print_r($voting_node_type);
+  }
+  if(isset($vote_name)){
+    print_r($vote_name);
+  }
+  if(isset($vote_undo)){
+    print_r($vote_undo);
+  }
+}

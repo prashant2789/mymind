@@ -1,0 +1,5 @@
+name = Custom voting
+description = Creating voting button for each node
+core = 7.x
+package = Prashant
+
