@@ -1,0 +1,71 @@
+<?php
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+function taxonomymonitor_term_insert($term) {
+  exit;
+  _send_notification('term', 'added', $term->name);
+}
+
+/**
+ * Implements hook_term_update()
+ */
+function taxonomymonitor_term_update($term) {
+  _send_notification('term', 'updated', $term->name);
+}
+
+/**
+ * Implements hook_term_delete()
+ */
+function taxonomymonitor_term_delete($term) {
+  _send_notification('term', 'deleted', $term->name);
+}
+
+/**
+ * Implements hook_vocabulary_insert()
+ */
+function taxonomymonitor_vocabulary_insert($vocabulary) {
+  _send_notification('vocabulary', 'added', $vocabulary->name);
+}
+
+function taxonomymonitor_vocabulary_update($vocabulary) {
+  _send_notification('vocabulary', 'updated', $vocabulary->name);
+}
+
+/**
+ * Implements hook_vocabulary_delete()
+ */
+function taxonomymonitor_vocabulary_delete($vocabulary) {
+  _send_notification('vocabulary', 'deleted', $vocabulary->name);
+}
+
+/**
+ * Log changes to taxonomy using watchdog and send out an email notification
+ * describing the change
+ */
+function _send_notification($type, $action, $name) {
+  $module = 'taxonomymonitor';
+  $key = 'notice';
+  $to = 'prashant.a.gaurav@accenture.com';
+  $language = language_default();
+  $params = t("A $type named $name was $action");
+  $from = 'prashant.a.gaurav@accenture.com';
+  $send = TRUE;
+  watchdog('Taxonomy Monitor', 'A @type named @name was @action', array('@type' => $type,
+  '@name' => $name, '@action' => $action));
+  //$to = variable_get('site_mail', 'prashant.a.gaurav@accenture.com');
+  //$subject = t("There was a change to taxonomy");
+  //$body = t("A $type named $name was $action");
+// Send email here.
+  $result = drupal_mail($module, $key, $to, $language, $params, $from, $send);
+  if ($result['result'] == TRUE) {
+    print_r('Your message has been sent.');
+  }
+  else {
+    print_r('There was a problem sending your message and it was not sent.');
+  }
+}

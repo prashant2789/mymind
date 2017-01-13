@@ -1,0 +1,30 @@
+<?php
+
+/* 
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+//ONE WAY of calling JS to module file
+/*function hamburger_menu_init() {
+    drupal_add_js(drupal_get_path('module', 'hamburger_menu') .'/hamburger_menu.js');
+}*/
+
+//ANOTHER WAY of calling JS to module file
+function hamburger_menu_init(){
+   theme('hamburger_menu_javascript'); 
+}
+
+function hamburger_menu_theme(){
+    return array(
+        'hamburger_menu_javascript' => array(
+            'arguments' => array(),
+        ),
+    );
+}
+
+function theme_hamburger_menu_javascript(){
+    drupal_add_js(drupal_get_path('module','hamburger_menu').'/hamburger_menu.js');
+}
+

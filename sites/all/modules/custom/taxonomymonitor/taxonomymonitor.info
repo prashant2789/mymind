@@ -1,0 +1,6 @@
+name = Taxonomy Monitor
+description = Sends email to notify of changes to taxonomy vocabularies.
+package = Prashant
+dependencies[] = taxonomy
+core = 7.x
+files[] = taxonomymonitor.module

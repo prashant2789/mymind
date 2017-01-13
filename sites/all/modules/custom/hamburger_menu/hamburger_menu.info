@@ -1,0 +1,5 @@
+name = Hamburger Menu
+description = Creating hamburger menu
+package = Prashant
+core = 7.x
+files[]=hamburger_menu.module

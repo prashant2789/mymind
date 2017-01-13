@@ -1,0 +1,4 @@
+name = XML RPC tutorial
+description = XML RPC client server request
+core = 7.x
+package = Prashant

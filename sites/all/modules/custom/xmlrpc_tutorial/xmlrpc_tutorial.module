@@ -1,0 +1,199 @@
+<?php
+
+/* 
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+function xmlrpc_tutorial_menu(){
+  $items['tutorial/xmlrpc'] = array(
+    'title' => 'XML-RPC Example',
+    'description' => 'Information about the XML-RPC example',
+    'page callback' => array('xmlrpc_tutorial_info'),
+    'access callback' => TRUE,
+  );
+  $items['tutorial/xmlrpc/server'] = array(
+    'title' => 'XML RPC Server data',
+    'description' => 'Get details of server side data',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('xmlpc_tutorial_server'),
+    'access callback' => TRUE,
+  );
+  $items['tutorial/xmlrpc/client'] = array(
+    'title' => 'XML RPC Client data',
+    'description' => 'Match details of client and server data',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('xmlrpc_tutorial_client'),
+    'access callback' => TRUE,
+  );
+  
+  return $items;
+}
+
+function xmlrpc_tutorial_info(){
+  $content = "<a href='/drupal7/tutorial/xmlrpc/server'> Server </a></br></br>";
+  $content .= "<a href='/drupal7/tutorial/xmlrpc/client'> Client </a>";
+  
+  return $content;
+}
+
+function xmlpc_tutorial_server($form, &$form_state){
+  $form['max_val'] = array(
+    '#title' => 'Maximum value',
+    '#description' => 'Enter the maximum value',
+    '#type' => 'textfield',
+    '#default_value' => variable_get('xmlrpc_tutorial_max_val',100),
+  );
+  $form['min_val'] = array(
+    '#title' => 'Minimum Value',
+    '#description' => 'Enter the minimum value',
+    '#type' => 'textfield',
+    '#default_value' => variable_get('xmlrpc_tutorial_min_val',10),
+  );
+  
+  return system_settings_form($form);
+}
+
+function xmlrpc_tutorial_client($form, &$form_state){
+   $form['num1'] = array(
+    '#title' => 'Number 1',
+    '#description' => 'Enter the fisrt value',
+    '#type' => 'textfield',
+    '#default_value' => 0,
+  );
+  $form['num2'] = array(
+    '#title' => 'Number 2',
+    '#description' => 'Enter the second value',
+    '#type' => 'textfield',
+    '#default_value' => 0,
+  );
+  $form['add'] = array(
+    '#title' => 'ADD',
+    '#description' => 'ADDITION',
+    '#type' => 'submit',
+    '#value' => 'ADD',
+    '#submit' => array('xmlrpc_tutorial_addition'),
+  );
+  $form['subtract'] = array(
+    '#title' => 'SUBTRACT',
+    '#description' => 'SUBTRACT',
+    '#type' => 'submit',
+    '#value' => 'Subtract',
+    '#submit' => array('xmlrpc_tutorial_subtraction'),
+  );
+  
+  return $form;
+}
+
+function xmlrpc_tutorial_xmlrpc() {
+  $methods[] = array(
+    // First argument is the method name.
+    'xmlrpc_tutorial.add',
+    // Callback to execute when this method is requested.
+    '_xmlrpc_tutorial_server_add',
+    // An array defines the types of output and input values for this method.
+    array(
+      // The first value is the return type, an integer in this case.
+      'int',
+      // First operand is an integer.
+      'int',
+      // Second operand is an integer.
+      'int',
+    ),
+    // Include a little description that is shown when XML-RPC server is
+    // requested for the implemented methods list.
+    // Method description.
+    t('Returns the sum of the two arguments.'),
+  );
+  // The subtract method is similar to the addition, only the method name,
+  // callback and description are different.
+  $methods[] = array(
+    'xmlrpc_tutorial.subtract',
+    '_xmlrpc_tutorial_server_subtract',
+    array('int', 'int', 'int'),
+    t('Return difference of the two arguments.'),
+  );
+
+  return $methods;
+}
+
+function xmlrpc_tutorial_addition($form, &$form_state){
+  
+  //define endpoint
+  $server = url($GLOBALS['base_url'] . '/xmlrpc.php', array('external' => TRUE));
+  $options = array(
+    'xmlrpc_tutorial.add' => array(
+      (int) $form_state['values']['num1'],
+      (int) $form_state['values']['num2'],
+    ),
+  );
+  $result = xmlrpc($server, $options);
+  if ($result === FALSE) {
+    drupal_set_message(
+      t('Error return from xmlrpc(): Error: @errno, Message: @message',
+      array('@errno' => xmlrpc_errno(), '@message' => xmlrpc_error_msg())),
+      'error'
+    );
+  }
+  else {
+    drupal_set_message(
+      t('The XML-RPC server returned this response: @response',
+      array('@response' => print_r($result, TRUE)))
+    );
+  }
+}
+
+function xmlrpc_tutorial_subtraction($form, &$form_state){
+  $server = url($GLOBALS['base_url'] . '/xmlrpc.php', array('external' => TRUE));
+  $options = array(
+    'xmlrpc_tutorial.subtract' => array(
+      (int) $form_state['values']['num1'],
+      (int) $form_state['values']['num2'],
+    ),
+  );
+  $result = xmlrpc($server, $options);
+  if ($result === FALSE) {
+    drupal_set_message(
+      t('Error return from xmlrpc(): Error: @errno, Message: @message',
+      array('@errno' => xmlrpc_errno(), '@message' => xmlrpc_error_msg())),
+      'error'
+    );
+  }
+  else {
+    drupal_set_message(
+      t('The XML-RPC server returned this response: @response',
+      array('@response' => print_r($result, TRUE)))
+    );
+  }
+}
+
+function _xmlrpc_tutorial_server_add($num1, $num2) {
+  $sum = $num1 + $num2;
+  // If result is not within maximum and minimum limits,
+  // return corresponding error.
+  $max = variable_get('xmlrpc_tutorial_max_val', 100);
+  $min = variable_get('xmlrpc_tutorial_min_val', 10);
+  if ($sum > $max) {
+    return xmlrpc_error(10001, t('Result is over the upper limit (@max) defined by the server.', array('@max' => $max)));
+  }
+  if ($sum < $min) {
+    return xmlrpc_error(10002, t('Result is below the lower limit defined by the server (@min).', array('@min' => $min)));
+  }
+  // Otherwise return the result.
+  return $sum;
+}
+
+function _xmlrpc_tutorial_server_subtract($num1, $num2) {
+  $sum = $num1-$num2;
+  $max = variable_get('xmlrpc_tutorial_max_val', 100);
+  $min = variable_get('xmlrpc_tutorial_min_val', 10);
+  if ($sum > $max) {
+    return xmlrpc_error(10001, t('Result is over the upper limit (@max) defined by the server.', array('@max' => $max)));
+  }
+  if ($sum < $min) {
+    return xmlrpc_error(10002, t('Result is below the lower limit defined by the server (@min).', array('@min' => $min)));
+  }
+  // Otherwise return the result.
+  return $sum;
+}

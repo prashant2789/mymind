@@ -1,0 +1,6 @@
+name = Plus One
+description = "A +1 voting widget for nodes. "
+package = Prashant
+core = 7.x
+files[]=plusone.module
+
