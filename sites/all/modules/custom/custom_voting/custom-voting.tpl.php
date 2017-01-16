@@ -12,9 +12,9 @@ print("hello world");
     <head>
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
         <script type="text/javascript">
-          $(document).ready(function () {<!--  w w  w. j a  v a2  s.  c  om-->
+          $(document).ready(function () {
               $("button").click(function () {
-                  var text = $(this).text();                                
+                  var text = $(this).text();                    
                   $("input").val(text);
               });
           });

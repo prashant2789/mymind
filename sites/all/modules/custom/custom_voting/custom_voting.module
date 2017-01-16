@@ -45,8 +45,7 @@ function custom_voting_block_view($delta = ''){
 }
 
 function func_voting_implementation(){ 
-  $node = menu_get_object();
-  echo "JS Value"; print($_POST['text']);
+  $node = menu_get_object(); 
   if($node->type == 'article'){  
     $form['submit'] = array(
       '#type' => 'submit',
