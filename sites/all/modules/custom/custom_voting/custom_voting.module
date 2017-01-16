@@ -26,14 +26,44 @@ function custom_voting_menu(){
   return $items;
 }
 
-function custom_voting_save_config(){
-  if(isset($voting_node_type)){
-    print_r($voting_node_type);
+function custom_voting_block_info(){
+  $block['vote_button'] = array(
+    'info' => 'Vote Button',
+    'description' => 'Vote for this node',
+    'cache' => DRUPAL_NO_CACHE,
+  );
+  
+  return $block;
+}
+
+function custom_voting_block_view($delta = ''){
+  if($delta == 'vote_button') {
+    $block['subject'] = 'Voting Button';
+    $block['content'] = func_voting_implementation();   
+    return $block;
+  }  
+}
+
+function func_voting_implementation(){ 
+  $node = menu_get_object();
+  echo "JS Value"; print($_POST['text']);
+  if($node->type == 'article'){  
+    $form['submit'] = array(
+      '#type' => 'submit',
+      '#value' => 'submit',
+    );
+    $x = "I am Prashant Gaurav";
+    return theme('custom-voting',array('form'=>$form)); 
   }
-  if(isset($vote_name)){
-    print_r($vote_name);
-  }
-  if(isset($vote_undo)){
-    print_r($vote_undo);
-  }
+}
+ 
+function custom_voting_theme() {     
+  return array(
+    'custom-voting' => array(
+      'template' => 'custom-voting', 
+      'variables'=> array(
+        'form'=>NULL,
+      ),
+    ),   
+  ); 
 }
